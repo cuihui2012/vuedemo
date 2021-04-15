@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        [cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- 插值表达式的使用 -->
+
+        <!-- v-cloak不会有闪烁问题,可以动态拼接 -->
+        <p v-cloak>+++++++++++{{msg}}-----------------</p>
+        <!-- v-text不会有闪烁问题,但会覆盖标签内的内容 -->
+        <h4 v-text="msg">1232131</h4>
+
+        <div>{{msg2}}</div>
+        <div v-text="msg2"></div>
+        <div v-html="msg2"></div>
+
+        <!-- v-bind提供了绑定属性 -->
+        <input type="button" value="按钮1" v-bind:title="mytitle + '123213'">
+        <!-- v-bind简写方式 -->
+        <input type="button" value="按钮2" :title="mytitle + '123213'">
+
+        <!-- v-on:click/mouseover等 -->
+        <input type="button" value="按钮3" :title="mytitle + '123213'" v-on:click="show">
+        <!-- v-on:click/mouseover等缩写方式 -->
+        <input type="button" value="按钮4" :title="mytitle + '123213'" @click="method2">
+
+    </div>
+
+
+    <script src="./lib/vue.js"></script>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: '123',
+                msg2: '<h1>我是123</h1>',
+                mytitle: '自定义按钮'
+            },
+            methods: {  //methods定义了当前vue可用的方法
+                show: function () {
+                    alert('Hello');
+                },
+                method2() {
+                    // 获取vue自身的元素值
+                    alert(this.msg);
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

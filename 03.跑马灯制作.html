@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="./lib/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="button" value="浪起来" @click="lang">
+        <input type="button" value="停止" @click="stop">
+        <div v-text="msg"></div>
+    </div>
+    
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: '这是一个测试的字符串...',
+                flag: null
+            },
+            
+            methods: {  //methods定义了当前vue可用的方法
+                lang(){
+                    if(this.flag != null) return;
+                    this.flag = setInterval(() => {
+                        var start = this.msg.substring(0,1);
+                        var end = this.msg.substring(1);
+                        this.msg = end + start;
+                    }, 400);
+                },
+                stop(){
+                    // 内部方法调用
+                    this.test();
+                    clearInterval(this.flag);
+                    this.flag = null;
+                    
+                },
+                test(){
+                    console.log("这是一个测试方法")
+                },
+            },
+        })
+    </script>
+</body>
+</html>

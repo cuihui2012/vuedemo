@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <link rel="stylesheet" href="./lib/bootstrap.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- 监听调用父组件的方法,否则点击发表评论父组件数据不会实时刷新 -->
+        <cmt-box @func="loadComments"></cmt-box>
+
+        <ul class="list-group">
+            <li class="list-group-item" v-for="item in list">
+                <span class="badge">评论人:{{item.user}}</span>
+                {{item.content}}
+            </li>
+        </ul>
+
+
+    </div>
+
+    <template id="tmpl">
+        <div>
+            <div class="form-group">
+                <label>评论人:</label>
+                <input type="text" class="form-control" v-model="user">
+            </div>
+            <div class="form-group">
+                <label>评论内容:</label>
+                <textarea class="form-control" v-model="content"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="button" value="发表评论" class="btn btn-primary" @click="postContent">
+            </div>
+        </div>
+    </template>
+    <script>
+
+        var contentBox = {
+            data() {
+                return {
+                    user: "",
+                    content: ""
+                }
+            },
+            template: "#tmpl",
+            methods: {
+                postContent() {
+                    var comment = {
+                        id: Date.now(),
+                        user: this.user,
+                        content: this.content
+                    }
+                    var list = JSON.parse(localStorage.getItem("cmts") || '[]');
+                    list.unshift(comment);
+                    localStorage.setItem('cmts',JSON.stringify(list));
+                    this.user = this.content = "";
+                    // 调用父组件方法
+                    this.$emit('func');
+                }
+            }
+        }
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                list: [
+                    { id: Date.now(), user: "李白", content: "天生我才必有用" },
+                    { id: Date.now(), user: "江小白", content: "江小白" },
+                    { id: Date.now(), user: "小马", content: "风吹草地见牛羊" }
+                ]
+            },
+            created() {
+                this.loadComments();
+            },
+            methods: {
+                // 从本地缓存读取数据
+                loadComments(){
+                    var list = JSON.parse(localStorage.getItem("cmts") || '[]');
+                    this.list = list;
+                }
+            },
+            components: {
+                "cmt-box": contentBox
+            }
+        });
+    </script>
+</body>
+
+</html>

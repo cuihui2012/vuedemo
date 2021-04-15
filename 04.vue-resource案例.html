@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <link rel="stylesheet" href="./lib/bootstrap.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加品牌</h3>
+            </div>
+            <div class="panel-body form-inline">
+                <label>
+                    Sname:
+                    <!-- v-model 数据双向绑定 -->
+                    <input type="text" v-model="sname" class="form-control">
+                </label>
+                <label>
+                    Age:
+                    <input type="text" v-model="age" class="form-control">
+                </label>
+                <input type="button" value="添加" @click="add" class="btn btn-primary">
+            </div>
+        </div>
+
+
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Sid</th>
+                    <th>Sname</th>
+                    <th>Age</th>
+                    <th>Createtime</th>
+                    <th>operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in list" :key="item.sid">
+                    <td>{{item.sid}}</td>
+                    <td>{{item.sname}}</td>
+                    <td>{{item.age}}</td>
+                    <td>{{item.createtime}}</td>
+                    <td>
+                        <!-- prevent阻止默认事件 -->
+                        <a href="" @click.prevent="del(item.sid)">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <script>
+        // 全局配置根路径,也可以局部配置,每次http请求路径不能带/,否则不会启用根路径做拼接
+        Vue.http.options.root = 'http://202.201.13.8:8080/MetaAppAPI/common/lzudata/';
+        // 全局配置emulateHTTP选项,下述emulateHTTP参数可注释
+        Vue.http.options.emulateHTTP = true;
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                sname: "",
+                age: "",
+                list: [
+                    { sid: "123", sname: "崔辉", age: "28", createtime: new Date() },
+                    { sid: "456", sname: "小明", age: "28", createtime: new Date() }
+                ]
+            },
+            //生命周期钩子函数
+            created() {
+                //初始化列表
+                this.getAllList();
+            },
+            methods: {
+                add() {
+                    this.$http.post("addOrUpdateDataByTableNames",
+                        {
+                            paramList: [
+                                {
+                                    tableName: "cuihui_test",
+                                    primaryKey: "sid",
+                                    cols: {
+                                        sid: "",
+                                        sname: this.sname,
+                                        age: this.age
+                                    },
+                                    seqName: "SEQ_RS"
+                                }
+                            ]
+                        }/* ,
+                        // emulateJSON 传true 是form ，传false是json
+                        {
+                            emulateJSON: false
+                        } */).then(result => {
+                            var result = result.body;
+                            if (result.code == "0000") {
+                                console.log("新增成功");
+                                this.sname = this.age = "";
+                                this.getAllList();
+                            } else {
+                                console.log("更新失败");
+                            }
+                        })
+                },
+                getAllList() {
+                    this.$http.get("getDataByViewName?viewName=cuihui_test").then(result => {
+                        console.log("result----->" + result);
+                        var result = result.body;
+                        if (result.code == "0000") {
+                            //获取数据成功
+                            console.log(result.data.data);
+                            this.list = result.data.data;
+                        } else {
+                            //获取数据失败
+                            console.log("获取数据失败");
+                        }
+                    })
+                },
+                del(sid) {
+                    this.$http.post("deleteDataByTableName",
+                        {
+                            "tableName": 'cuihui_test',
+                            "primaryKey": 'sid',
+                            "primaryKeyVal": [sid],
+                            "deleteType": "1",
+                            "flagCol": "",
+                            "flagColVal": ""
+                        }/* ,
+                        // emulateJSON 传true 是form ，传false是json
+                        {
+                            emulateJSON: false
+                        } */).then(result => {
+                            var result = result.body;
+                            if (result.code == "0000") {
+                                console.log("删除成功");
+                                this.getAllList();
+                            } else {
+                                console.log("删除失败");
+                            }
+                        })
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

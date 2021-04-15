@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 绑定父组件数据 -->
+        <com1 :parentmsg="msg" :parentmsg1="msg1"></com1>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: "这是父组件数据",
+                msg1: "这是父组件数据1"
+            },
+            methods: {},
+            // 私有组件
+            components: {
+                com1: {
+                    // 子组件数据
+                    data(){
+                        return {
+                            title: "子组件title",
+                            content: "子组件content"
+                        }
+                    },
+                    // 子组件接收父组件数据,父组件数据只读
+                    props: ["parentmsg","parentmsg1"],
+                    template: "<h1 @click='change'>这是子组件----父组件数据---{{parentmsg}}---父组件数据1---{{parentmsg1}}---子组件数据-----{{title}}</h1>",
+                    methods: {
+                        change(){
+                            console.log("父组件数据---->" + this.parentmsg + "  子组件数据----->" + this.title);
+                            // 最好不要这么做
+                            this.parentmsg = "父组件被修改了";
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

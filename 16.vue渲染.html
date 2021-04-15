@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        12312312
+    </div>
+    <script>
+        var teml = {
+            template: "<h1>登录组件</h1>"
+        }
+        var vm=new Vue({
+           el:'#app',
+           data:{},
+           methods:{},
+           render(h) {
+               // h是一个函数,将参数(组件字面量对象)渲染成html结构,替换el对象
+               return h(teml);
+           },
+        });
+    </script>
+</body>
+
+</html>
